@@ -29,7 +29,7 @@ export default async function(req, res) {
     }else if(isHumorous){
         chosenStyle = "humorous"
     }
-    
+
 
 
     try {
@@ -39,8 +39,9 @@ export default async function(req, res) {
             temperature: 0.6,
             max_tokens: 300,
         });
-        console.log(completion.data.choices[0].text)
-        res.status(200).json({ result: completion.data.choices[0].text });
+        const text = completion.data.choices[0].text;
+const textWithBreaks = text.replace(/\n/g, "<br>");
+res.status(200).json({ result: textWithBreaks });
     } catch (error) {
         // Consider adjusting the error handling logic for your use case
         if (error.response) {

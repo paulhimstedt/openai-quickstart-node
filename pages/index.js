@@ -1,6 +1,17 @@
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
+import * as React from 'react';
+import { NextUIProvider } from '@nextui-org/react';
+import { Input } from "@nextui-org/react";
+import { Card, Button,Text, Row ,Spacer, Grid} from "@nextui-org/react";
+
+
+import { Navbar, Link, Radio, useTheme } from "@nextui-org/react";
+
+
+
+
 
 export default function Home() {
   const [senderInput, setSenderInput] = useState("");
@@ -9,7 +20,8 @@ export default function Home() {
   const [formalChecked, setFormalChecked] = useState(false);
   const [informalChecked, setInformalChecked] = useState(false);
   const [humorousChecked, setHumorousChecked] = useState(false);
-  const [result, setResult] = useState();
+  const [result, setResult] = useState("");
+  
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -40,39 +52,158 @@ export default function Home() {
       alert(error.message);
     }
   }
+ /*<img css={{mw:"10px"}} src="/AIMAIL_icon.PNG"/>*/
+ const [variant, setVariant] = React.useState("default");
+  const [activeColor, setActiveColor] = React.useState("primary");
 
+  const {isDark} = useTheme();
+
+  const variants = [
+    "default",
+    "highlight",
+    "highlight-solid",
+    "underline",
+    "highlight-rounded",
+    "highlight-solid-rounded",
+    "underline-rounded",
+  ];
+
+  const colors = ["primary", "secondary", "success", "warning", "error"];
+  const collapseItems = [
+    "Features",
+    "Customers",
+    "Pricing",
+    "Company",
+    "Legal",
+    "Team",
+    "Help & Feedback",
+    "Login",
+    "Sign Up",
+  ];
   return (
+    
+    <NextUIProvider>
+    <Navbar isBordered variant="sticky">
+        <Navbar.Brand>
+          <Navbar.Toggle aria-label="toggle navigation" />
+         
+          <Text b color="inherit" hideIn="xs">
+          AIMAIL
+          </Text>
+        </Navbar.Brand>
+        <Navbar.Content enableCursorHighlight hideIn="xs" variant="underline">
+          <Navbar.Link href="#">Features</Navbar.Link>
+          <Navbar.Link isActive href="#">
+            Customers
+          </Navbar.Link>
+          <Navbar.Link href="#">Pricing</Navbar.Link>
+          <Navbar.Link href="#">Company</Navbar.Link>
+        </Navbar.Content>
+        <Navbar.Content>
+          <Navbar.Link color="inherit" href="#">
+            Login
+          </Navbar.Link>
+          <Navbar.Item>
+            <Button auto flat as={Link} href="#">
+              Sign Up
+            </Button>
+          </Navbar.Item>
+        </Navbar.Content>
+        <Navbar.Collapse>
+        {collapseItems.map((item, index) => (
+          <Navbar.CollapseItem key={item}>
+            <Link
+              color="inherit"
+              css={{
+                minWidth: "100%",
+              }}
+              href="#"
+            >
+              {item}
+            </Link>
+          </Navbar.CollapseItem>
+        ))}
+      </Navbar.Collapse>
+      </Navbar>  
     <div>
       <Head>
-        <title>OpenAI Quickstart</title>
-        <link rel="icon" href="/AIMAIL_icon.PNG" />
+        <title>AIMAIL</title>
+        <link rel="icon"  href="/AIMAIL_icon.PNG" />
+        
       </Head>
-
-      <main className={styles.main}>
-        <img src="/AIMAIL_icon.PNG" className={styles.icon} />
-        <h3>Generate custom E-mails!</h3>
+      <Grid.Container gap={2} justify="center" >
+      <Grid sm={12} md={5}>
+        <Card css={{ p:"$15" }}>
+          <Card.Header>
+            <Text b>Subject</Text>
+          </Card.Header>
+          <Card.Divider />
+          <Card.Body css={{ py: "$10" }}>
+            <p>{result.split(/<br ?\/?>/)
+          .flatMap((line, i) => [line, <br key={`line-${i}`} />])}</p>
+            
+            
+          </Card.Body>
+          <Card.Divider />
+          <Card.Footer>
+            <Row justify="flex-end">
+              <Button size="sm" light>
+                Regenerate
+              </Button>
+              <Button size="sm">Copy</Button>
+            </Row>
+          </Card.Footer>
+        </Card>
+      </Grid>
+      <Grid sm={12} md={5} >
+        <Card css={{ p:"$15" }}>
+        <main >
+       
+        <Text
+        h1
+        size={60}
+        css={{
+          textGradient: "45deg, $blue600 -20%, $pink600 50%",
+        }}
+        weight="bold"
+      >
+        Generate Your Emails
+      </Text>
         <form onSubmit={onSubmit}>
-          <input
+        <Spacer y={2} />
+          <Input
+            labelPlaceholder="enter sender" 
+            size="lg" 
+            placeholder="Large" 
+            status="default"
             type="text"
             name="sender"
-            placeholder="Enter an sender"
             value={senderInput}
             onChange={(e) => setSenderInput(e.target.value)}
           />
-          <input
+           <Spacer y={2} />
+          <Input
             type="text"
             name="reciever"
-            placeholder="Enter an Reciever"
+            labelPlaceholder="enter reciever" 
+            size="lg" 
+            placeholder="Large"
+            status="default"
             value={recieverInput}
             onChange={(e) => setRecieverInput(e.target.value)}
           />
-          <input
+           <Spacer y={2} />
+          <Input
             type="text"
             name="keyInfo"
-            placeholder="Provide key informations"
+            status="default"
+            size="lg" 
+            placeholder="Large" 
+            labelPlaceholder="Provide key informations"
             value={keyInfoInput}
             onChange={(e) => setKeyInfoInput(e.target.value)}
           />
+          <Spacer y={2} />
           <div className={styles.checkboxGroup}>
           <label>
             <input
@@ -105,125 +236,19 @@ export default function Home() {
             Humorous
           </label>
           </div>
-          <input type="submit" value="Generate names" />
-        </form>
-        <div className={styles.result}>{result}</div>
-      </main>
-    </div>
-  );
-}
-/*import Head from "next/head";
-import { useState } from "react";
-import styles from "./index.module.css";
-
-
-export default function Home() {
-  
-  const [senderInput, setSenderInput] = useState("");
-  const [receiverInput, setReceiverInput] = useState("");
-  const [senderInput, setSenderInput] = useState("");
-  const [keyInput, setKeyInput] = useState("");
-  const [result, setResult] = useState();
-
-  async function onSubmit(event) {
-    event.preventDefault();
-    try {
-      console.log("working");
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        
-        body: JSON.stringify({sender : senderInput}),
-      });
-
-      const data = await response.json();
-      
-      if (response.status !== 200) {
-        throw data.error || new Error(`Request failed with status ${response.status}`);
-      }
-
-      setResult(data.result);
-      
-     
-    } catch(error) {
-      // Consider implementing your own error handling logic here
-      console.error(error);
-      alert(error.message);
-    }
-  }
-
-  return (
-    <div>
-      <Head>
-        <title>MailHelper</title>
-        <link rel="icon" href="/AIMAIL_icon.png" />
-      </Head>
-
-      <main className={styles.main}>
-        <img src="/AIMAIL_icon.png" className={styles.icon} />
-        <h3>Generate custom Mails</h3>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="sender"
-            placeholder="Enter an sender"
-            value={senderInput}
-            onChange={(e) => setSenderInput(e.target.value)}
-          />
-          <input type="submit" value="Generate names" />
-        </form>
-
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="receiver"
-            placeholder="enter reciever name"
-            value={receiverInput}
-            onChange={(e) => setReceiverInput(e.target.value)}
-          />
-          <input
-            type="text"
-            name="sender"
-            placeholder="enter sender name"
-            value={senderInput}
-            onChange={(e) => setSenderInput(e.target.value)}
-          />
-          <input
-            type="text"
-            name="key_info"
-            placeholder="enter key points"
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-          />
-          
-          <input type="submit" value="Generate Mail"/>
-         
+          <Spacer y={1} />
+          <Button shadow color="gradient" type="submit" value="Generate names" > Generate names</Button>
         </form>
         
-
-        <div className={styles.result}>{result}</div>
         
       </main>
+        </Card>
+      </Grid>
+    </Grid.Container>
+      <Row justify="center" align="center">
+      
+    </Row>
     </div>
+    </NextUIProvider>
   );
 }
-*/
-/*
-<div id="radio_input">
-            <label className="label cursor-pointer">
-              <span className="label-text">formal</span> 
-              <input type="radio" name="radio-10" className="radio checked:bg-red-500" checked/>
-            </label>
-            <label className="label cursor-pointer">
-              <span className="label-text">informal</span> 
-              <input type="radio" name="radio-10" className="radio checked:bg-red-500" checked/>
-            </label>            
-            <label className="label cursor-pointer">
-              <span className="label-text">humerous</span> 
-              <input type="radio" name="radio-10" className="radio checked:bg-red-500" checked/>
-            </label>
-          </div>
-          <input type="range" min="0" max="100" value="" className="range" />
-*/
