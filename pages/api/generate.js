@@ -18,20 +18,24 @@ export default async function(req, res) {
     const sender = req.body.sender || '';
     const reciever = req.body.reciever || '';
     const keyInfo = req.body.keyInfo || '';
-
-    if (sender.trim().length === 0) {
-        res.status(400).json({
-            error: {
-                message: "Please enter a valid animal",
-            }
-        });
-        return;
+    const isFormal = req.body.isFormal || '';
+    const isInformal = req.body.isInformal || '';
+    const isHumorous = req.body.isHumorous || '';
+    let chosenStyle = ""
+    if(isFormal){
+        chosenStyle = "formal"
+    }else if(isInformal){
+        chosenStyle = "informal"
+    }else if(isHumorous){
+        chosenStyle = "humorous"
     }
+    
+
 
     try {
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
-            prompt: generatePrompt(sender, reciever, keyInfo),
+            prompt: generatePrompt(sender, reciever, keyInfo, chosenStyle),
             temperature: 0.6,
             max_tokens: 300,
         });
@@ -53,14 +57,15 @@ export default async function(req, res) {
     }
 }
 
-function generatePrompt(sender, reciever, keyInfo) {
+function generatePrompt(sender, reciever, keyInfo, chosenStyle) {
     const capitalizedSender = sender[0].toUpperCase() + sender.slice(1).toLowerCase();
     const capitalizedReciever = reciever[0].toUpperCase() + reciever.slice(1).toLowerCase();
     const capitalizedKeyInput = keyInfo[0].toUpperCase() + keyInfo.slice(1).toLowerCase();
     return `Write an email including the following Informations: 
   Sender: ${capitalizedSender} 
   Reciever: ${capitalizedReciever}
-  Key informations: ${capitalizedKeyInput} `;
+  Key informations: ${capitalizedKeyInput}
+  Style of the mail: ${chosenStyle}`;
 }
 /*process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', reason.stack || reason)

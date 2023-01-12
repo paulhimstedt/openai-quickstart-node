@@ -6,6 +6,9 @@ export default function Home() {
   const [senderInput, setSenderInput] = useState("");
   const [recieverInput, setRecieverInput] = useState("");
   const [keyInfoInput, setKeyInfoInput] = useState("");
+  const [formalChecked, setFormalChecked] = useState(false);
+  const [informalChecked, setInformalChecked] = useState(false);
+  const [humorousChecked, setHumorousChecked] = useState(false);
   const [result, setResult] = useState();
 
   async function onSubmit(event) {
@@ -16,7 +19,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({sender : senderInput, reciever: recieverInput, keyInfo: keyInfoInput}),
+        body: JSON.stringify({sender : senderInput, reciever: recieverInput, keyInfo: keyInfoInput ,isFormal: formalChecked, isInformal: informalChecked, isHumorous: humorousChecked}),
       });
 
       const data = await response.json();
@@ -28,6 +31,9 @@ export default function Home() {
       setSenderInput("");
       setRecieverInput("");
       setKeyInfoInput("");
+      setFormalChecked(false);
+      setInformalChecked(false);
+      setHumorousChecked(false);
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -39,12 +45,12 @@ export default function Home() {
     <div>
       <Head>
         <title>OpenAI Quickstart</title>
-        <link rel="icon" href="/dog.png" />
+        <link rel="icon" href="/AIMAIL_icon.PNG" />
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+        <img src="/AIMAIL_icon.PNG" className={styles.icon} />
+        <h3>Generate custom E-mails!</h3>
         <form onSubmit={onSubmit}>
           <input
             type="text"
@@ -67,6 +73,38 @@ export default function Home() {
             value={keyInfoInput}
             onChange={(e) => setKeyInfoInput(e.target.value)}
           />
+          <div className={styles.checkboxGroup}>
+          <label>
+            <input
+              type="checkbox"
+              name="style"
+              value="formal"
+              checked={formalChecked}
+              onChange={(e) => setFormalChecked({ formalChecked: e.target.checked })}
+            />
+            Formal
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="style"
+              value="informal"
+              checked={informalChecked}
+              onChange={(e) => setInformalChecked({ informalChecked: e.target.checked })}
+            />
+            Informal
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="style"
+              value="humorous"
+              checked={humorousChecked}
+              onChange={(e) => setHumorousChecked({ humorousChecked: e.target.checked })}
+            />
+            Humorous
+          </label>
+          </div>
           <input type="submit" value="Generate names" />
         </form>
         <div className={styles.result}>{result}</div>
