@@ -7,7 +7,7 @@ import { Input } from "@nextui-org/react";
 import { Card, Button,Text, Row ,Spacer, Grid} from "@nextui-org/react";
 
 
-import { Navbar, Link, Radio, useTheme } from "@nextui-org/react";
+import { Navbar, Link, Radio, useTheme, Progress } from "@nextui-org/react";
 
 
 
@@ -21,11 +21,12 @@ export default function Home() {
   const [informalChecked, setInformalChecked] = useState(false);
   const [humorousChecked, setHumorousChecked] = useState(false);
   const [result, setResult] = useState("");
-  
+  const [loadingState, setLoadingState] = useState();
 
   async function onSubmit(event) {
     event.preventDefault();
     try {
+      setLoadingState(true);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
@@ -46,6 +47,7 @@ export default function Home() {
       setFormalChecked(false);
       setInformalChecked(false);
       setHumorousChecked(false);
+      setLoadingState(false);
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -158,7 +160,12 @@ export default function Home() {
       <Grid sm={12} md={5} >
         <Card css={{ p:"$15" }}>
         <main >
-       
+        <Progress
+          indeterminated={loadingState}
+          color="secondary"
+          status="secondary"
+        />
+          
         <Text
         h1
         size={60}
@@ -237,7 +244,8 @@ export default function Home() {
           </label>
           </div>
           <Spacer y={1} />
-          <Button shadow color="gradient" type="submit" value="Generate names" > Generate names</Button>
+          
+          <Button shadow color="gradient" type="submit" value="Generate names" > Generate mail</Button>
         </form>
         
         
