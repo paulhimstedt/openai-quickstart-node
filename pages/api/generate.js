@@ -18,17 +18,10 @@ export default async function(req, res) {
     const sender = req.body.sender || '';
     const reciever = req.body.reciever || '';
     const keyInfo = req.body.keyInfo || '';
-    const isFormal = req.body.isFormal || '';
+    const chosenStyle = req.body.isSelected || '';
     const isInformal = req.body.isInformal || '';
     const isHumorous = req.body.isHumorous || '';
-    let chosenStyle = ""
-    if(isFormal){
-        chosenStyle = "formal"
-    }else if(isInformal){
-        chosenStyle = "informal"
-    }else if(isHumorous){
-        chosenStyle = "humorous"
-    }
+
 
 
 
@@ -40,8 +33,8 @@ export default async function(req, res) {
             max_tokens: 300,
         });
         const text = completion.data.choices[0].text;
-const textWithBreaks = text.replace(/\n/g, "<br>");
-res.status(200).json({ result: textWithBreaks });
+        const textWithBreaks = text.replace(/\n/g, "<br>");
+        res.status(200).json({ result: textWithBreaks });
     } catch (error) {
         // Consider adjusting the error handling logic for your use case
         if (error.response) {
