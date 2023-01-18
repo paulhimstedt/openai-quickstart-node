@@ -19,8 +19,6 @@ export default async function(req, res) {
     const reciever = req.body.reciever || '';
     const keyInfo = req.body.keyInfo || '';
     const chosenStyle = req.body.isSelected || '';
-    const isInformal = req.body.isInformal || '';
-    const isHumorous = req.body.isHumorous || '';
 
 
 

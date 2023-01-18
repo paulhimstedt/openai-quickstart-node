@@ -1,40 +1,31 @@
 import Head from "next/head";
 import { useState } from "react";
-//import styles from "pages/index.module.css";
 import * as React from 'react';
 import { NextUIProvider } from '@nextui-org/react';
-import { Input } from "@nextui-org/react";
-import { Card, Button, Text, Row, Spacer, Grid,Checkbox } from "@nextui-org/react";
+import { Switch, Input, Card, Button, Text, Row, Spacer, Grid, Checkbox, Navbar, Link, Progress, Popover } from "@nextui-org/react";
 import dynamic from 'next/dynamic'
 import { motion } from "framer-motion";
-import { Navbar, Link, Radio, useTheme, Progress, Popover } from "@nextui-org/react";
-import { createTheme } from "@nextui-org/react"
-
 import { useTheme as useNextTheme } from 'next-themes'
-import { Switch } from '@nextui-org/react'
-
+import { useCallback, useEffect } from 'react';
 import { SunIcon } from './components/SunIcon';
 import { MoonIcon } from './components/MoonIcon';
+
+// Select the button
 
 
 export default function Home() {
 
-
-  const [selected, setSelected] = useState("");
-
+  const [selected, setSelected] = useState([""]);
   const { setTheme } = useNextTheme();
-  const { isDark, type } = useTheme();
-
   const [senderInput, setSenderInput] = useState("");
   const [recieverInput, setRecieverInput] = useState("");
   const [keyInfoInput, setKeyInfoInput] = useState("");
-  const [formalChecked, setFormalChecked] = useState(false);
-  const [informalChecked, setInformalChecked] = useState(false);
-  const [humorousChecked, setHumorousChecked] = useState(false);
   const [result, setResult] = useState("");
+  const [subject, setSubject] = useState("");
   const [loadingState, setLoadingState] = useState(false);
   var [x, setX] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -45,7 +36,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ sender: senderInput, reciever: recieverInput, keyInfo: keyInfoInput, isSelected: selected}),
+        body: JSON.stringify({ sender: senderInput, reciever: recieverInput, keyInfo: keyInfoInput, isSelected: selected }),
       });
 
       const data = await response.json();
@@ -54,13 +45,13 @@ export default function Home() {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
       console.log(data.result)
-      setResult(data.result);
+      
+      
+
+      splitStringBySubject(data.result);
       setSenderInput("");
       setRecieverInput("");
       setKeyInfoInput("");
-      setFormalChecked(false);
-      setInformalChecked(false);
-      setHumorousChecked(false);
       setLoadingState(false);
       setIsOpen(true);
       setX('-10vw');
@@ -71,6 +62,52 @@ export default function Home() {
       alert(error.message);
     }
   }
+
+
+  
+  function splitStringBySubject(inputString) {
+    const subjectRegex = /(?:<br>)*Subject: ([^<]*)/;
+    const subjectMatch = inputString.match(subjectRegex);
+    let subject_content = '';
+    let rest_content = inputString;
+
+    if (subjectMatch) {
+      subject_content = subjectMatch[1];
+      rest_content = inputString.replace(subjectMatch[0], '');
+      rest_content = rest_content.replace(/^(<br>)*\s*/, ''); // remove leading <br> tags
+      //rest_content = rest_content.replace(/^\s*/, ''); // remove leading whitespaces
+    }
+    setSubject(subject_content);
+    setResult(rest_content);
+    return { subject_content, rest_content };
+  }
+
+  const handleClick = useCallback(async () => {
+    const stringValue = document.querySelector('#string-value');
+    try {
+      const text = stringValue.textContent.replace(/<br\s*\/?>/gi, '\n');
+      await navigator.clipboard.writeText(text);
+      console.log('Text copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const textElement = document.querySelector("#string-value");
+    const button = document.querySelector("#copy-button");
+    const observer = new MutationObserver(() => {
+        if (textElement && button) {
+            button.addEventListener("click", handleClick);
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [handleClick]);
+
+
+
+
   /*<img css={{mw:"10px"}} src="/AIMAIL_icon.PNG"/>*/
   const [variant, setVariant] = React.useState("default");
   const [activeColor, setActiveColor] = React.useState("primary");
@@ -174,17 +211,17 @@ export default function Home() {
               transition={{ type: "spring" }}
             >
               <Grid.Container gap={2} justify="center"  >
-                <Grid sm={12} md={2.5} >
+                <Grid sm={12} md={3} >
                   <Card css={{ p: "$15" }}>
                     <main >
                       <Progress
                         indeterminated={loadingState}
-                        color="secondary"
-                        status="secondary"
+                        color="gradient"
+
                       />
                       <Text
                         h1
-                        size={60}
+                        size={50}
                         css={{
                           textGradient: "45deg, $blue600 -20%, $pink600 50%",
                         }}
@@ -227,38 +264,46 @@ export default function Home() {
                           onChange={(e) => setKeyInfoInput(e.target.value)}
                         />
                         <Spacer y={1} />
-                        
+
                         <Checkbox.Group
+
+                          value={selected}
+                          onChange={setSelected}
                           label="Chose writing style"
                           orientation="horizontal"
-                          color="secondary" 
-                          value={selected}
-                          onChange={setSelected} 
-                          
+                          color="secondary"
+
+
                         >
-                          
+
                           <Checkbox size="sm" value="formal">formal</Checkbox>
                           <Checkbox size="sm" value="informal">informal</Checkbox>
                           <Checkbox size="sm" value="humorous">humerous</Checkbox>
                         </Checkbox.Group>
                         <Spacer y={1} />
 
+
+
                         <Popover placement={"right-bottom"} isOpen={isOpen} >
                           <Popover.Trigger>
                             <Button css={{ mr: "0px" }} shadow color="gradient" type="submit" value="Generate names" > Generate mail</Button>
                           </Popover.Trigger>
-                          <Popover.Content css={{ ml: "6%", p: "5%", w: "200px" }}>
+                          <Popover.Content css={{ ml: "6%", p: "5%", mw: "200px" }} >
                             <Card.Header>
-                              <Text b>Subject</Text>
+                              <Text b>Subject: {subject}</Text>
                             </Card.Header>
-                            {result.split(/<br ?\/?>/)
-                              .flatMap((line, i) => [line, <br key={`line-${i}`} />])}
+                            <Card.Divider />
+                            <Text id="string-value">
+                              {result.split(/<br ?\/?>/)
+                                .flatMap((line, i) => [line, <br key={`line-${i}`} />])}
+                            </Text>
+                            <Card.Divider />
                             <Card.Footer>
                               <Row justify="flex-end">
                                 <Button size="sm" light>
                                   Regenerate
                                 </Button>
-                                <Button size="sm">Copy</Button>
+                                <Button size="sm" id="copy-button" onClick={handleClick}>Copy</Button>
                               </Row>
                             </Card.Footer>
                           </Popover.Content>
@@ -273,7 +318,7 @@ export default function Home() {
         </div>
       </section>
       <section>
-        <h1>TEST</h1>
+
       </section>
     </NextUIProvider>
   );
