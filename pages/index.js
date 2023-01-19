@@ -2,14 +2,15 @@ import Head from "next/head";
 import { useState } from "react";
 import * as React from 'react';
 import { NextUIProvider } from '@nextui-org/react';
-import { Switch, Input, Card, Button, Text, Row, Spacer, Grid, Checkbox, Navbar, Link, Progress, Popover } from "@nextui-org/react";
+import { Col, Textarea, Switch, Input, Card, Button, Text, Row, Spacer, Grid, Checkbox, Navbar,  Progress, Link, Popover, ShopCard } from "@nextui-org/react";
 import dynamic from 'next/dynamic'
 import { motion } from "framer-motion";
 import { useTheme as useNextTheme } from 'next-themes'
 import { useCallback, useEffect } from 'react';
 import { SunIcon } from './components/SunIcon';
 import { MoonIcon } from './components/MoonIcon';
-
+//import { Link } from 'react-router-dom';
+//import {Link as LoginLink} from 'next/link';
 // Select the button
 
 
@@ -25,7 +26,7 @@ export default function Home() {
   const [loadingState, setLoadingState] = useState(false);
   var [x, setX] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  
+
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -45,8 +46,8 @@ export default function Home() {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
       console.log(data.result)
-      
-      
+
+
 
       splitStringBySubject(data.result);
       setSenderInput("");
@@ -64,7 +65,7 @@ export default function Home() {
   }
 
 
-  
+
   function splitStringBySubject(inputString) {
     const subjectRegex = /(?:<br>)*Subject: ([^<]*)/;
     const subjectMatch = inputString.match(subjectRegex);
@@ -97,9 +98,9 @@ export default function Home() {
     const textElement = document.querySelector("#string-value");
     const button = document.querySelector("#copy-button");
     const observer = new MutationObserver(() => {
-        if (textElement && button) {
-            button.addEventListener("click", handleClick);
-        }
+      if (textElement && button) {
+        button.addEventListener("click", handleClick);
+      }
     });
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
@@ -140,7 +141,7 @@ export default function Home() {
 
     <NextUIProvider >
 
-      <Navbar isBordered variant="sticky">
+      <Navbar isBordered variant="floating" mw="fluid" css={{bg:"#FFFFFF00"}}>
         <Navbar.Brand>
           <Navbar.Toggle aria-label="toggle navigation" />
 
@@ -158,13 +159,16 @@ export default function Home() {
           <Navbar.Link href="#">Company</Navbar.Link>
         </Navbar.Content>
         <Navbar.Content>
-          <Navbar.Link color="inherit" href="#">
+
+          <Navbar.Link color="inherit" href="/login">
             Login
           </Navbar.Link>
           <Navbar.Item>
-            <Button auto flat as={Link} href="#">
-              Sign Up
-            </Button>
+            <Link href="/login">
+              <Button auto flat>
+                Sign Up
+              </Button>
+            </Link>
           </Navbar.Item>
           <Navbar.Item>
             <Switch
@@ -180,9 +184,7 @@ export default function Home() {
             <Navbar.CollapseItem key={item}>
               <Link
                 color="inherit"
-                css={{
-                  minWidth: "100%",
-                }}
+
                 href="#"
               >
                 {item}
@@ -193,26 +195,27 @@ export default function Home() {
       </Navbar>
 
 
-      <section>
+      <section >
 
 
 
-        <div>
+        <div >
           <Head>
-            <title>AIMAIL</title>
+            <title> AIMAIL</title>
             <link rel="icon" href="/AIMAIL_icon.PNG" />
 
           </Head>
-          <div>
+          <div >
             <motion.div
               initial={{ x: 0 }}
               animate={{ x: x }}
-              className="box"
+
               transition={{ type: "spring" }}
             >
               <Grid.Container gap={2} justify="center"  >
-                <Grid sm={12} md={3} >
-                  <Card css={{ p: "$15" }}>
+                <Grid >
+                  <Card css={{ p: "$15" }} >
+
                     <main >
                       <Progress
                         indeterminated={loadingState}
@@ -253,7 +256,7 @@ export default function Home() {
                           onChange={(e) => setRecieverInput(e.target.value)}
                         />
                         <Spacer y={2} />
-                        <Input
+                        <Textarea
                           type="text"
                           name="keyInfo"
                           status="default"
@@ -263,6 +266,7 @@ export default function Home() {
                           value={keyInfoInput}
                           onChange={(e) => setKeyInfoInput(e.target.value)}
                         />
+
                         <Spacer y={1} />
 
                         <Checkbox.Group
@@ -286,9 +290,9 @@ export default function Home() {
 
                         <Popover placement={"right-bottom"} isOpen={isOpen} >
                           <Popover.Trigger>
-                            <Button css={{ mr: "0px" }} shadow color="gradient" type="submit" value="Generate names" > Generate mail</Button>
+                            <Button shadow color="gradient" type="submit" value="Generate names" > Generate mail</Button>
                           </Popover.Trigger>
-                          <Popover.Content css={{ ml: "6%", p: "5%", mw: "200px" }} >
+                          <Popover.Content css={{ ml: "6%", p: "5%" }} >
                             <Card.Header>
                               <Text b>Subject: {subject}</Text>
                             </Card.Header>
@@ -317,8 +321,53 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section>
+      <Grid.Container fluid gap={2} justify="center">
+        <Grid>
+          <Card>
+            <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
+              <Col>
+                <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
+                  What to watch
+                </Text>
+                <Text h4 color="white">
+                  Stream the Acme event
+                </Text>
+              </Col>
+            </Card.Header>
+            <Card.Image
+              src="https://nextui.org/images/card-example-4.jpeg"
+              objectFit="cover"
+              width="100%"
+              height={340}
+              alt="Card image background"
+            />
+          </Card>
+        </Grid>
+        <Grid>
+          <Card>
+            <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
+              <Col>
+                <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
+                  What to watch
+                </Text>
+                <Text h4 color="white">
+                  Stream the Acme event
+                </Text>
+              </Col>
+            </Card.Header>
+            <Card.Image
+              src="https://nextui.org/images/card-example-4.jpeg"
+              objectFit="cover"
+              width="100%"
+              height={340}
+              alt="Card image background"
+            />
+          </Card>
+        </Grid>
 
+      </Grid.Container>
+      <section>
+                    
       </section>
     </NextUIProvider>
   );
