@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Link,
   Card,
   Spacer,
   Button,
@@ -59,7 +60,15 @@ export default function Login() {
             <Text size={14}>Forgot password?</Text>
           </Row>
           <Spacer y={1} />
+          <Link href="/playground">
+              <Button auto flat>
+                Playground
+              </Button>
+            </Link>
+          <Spacer y={1} />
           <Button>Sign in</Button>
+          <Spacer y={1} />
+          <Button onClick={() => window.location.href = '/auth/google'}>Sign in with Google</Button>
         </Card>
       </Container>
     </div>
